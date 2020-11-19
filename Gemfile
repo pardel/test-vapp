@@ -40,6 +40,7 @@ group :development, :test do
   gem 'faker'
   gem 'rails-controller-testing'
   gem 'pry'                             # Debugging
+  gem 'guard-livereload', '~> 2.5', require: false
 
 end
 

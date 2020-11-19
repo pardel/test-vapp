@@ -1,0 +1,15 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+
+
+.form-container {
+  @apply mt-8 flex flex-col justify-center py-12;
+}
+
+@screen lg {
+  .form-container {
+    @apply mt-24;
+  }
+}

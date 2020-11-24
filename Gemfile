@@ -33,6 +33,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
 
   gem 'rspec-rails'
+  gem 'rspec-mocks'
   gem 'guard'
   gem 'guard-rspec', require: false
   gem 'factory_bot_rails'
@@ -41,6 +42,8 @@ group :development, :test do
   gem 'rails-controller-testing'
   gem 'pry'                             # Debugging
   gem 'guard-livereload', '~> 2.5', require: false
+
+  gem 'dotenv-rails', groups: [:development, :test]
 
 end
 
@@ -56,3 +59,6 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+
+gem 'jwt'

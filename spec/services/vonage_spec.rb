@@ -50,27 +50,27 @@ RSpec.describe Vonage do
       expect(apps).to_not be_nil
       expect(apps.first.id).to eq("032544e0-8a62-495e-b960-351e6188ae11")
     end
-    it " - error balance - invalid response" do
+    it " - error apps - invalid response" do
       allow(@vonage.data_source).to receive(:apps).and_return(nil)
       apps = @vonage.apps
       expect(apps).to eq([])
     end
-    it " - error balance - empty response" do
+    it " - error apps - empty response" do
       allow(@vonage.data_source).to receive(:apps).and_return("")
       apps = @vonage.apps
       expect(apps).to eq([])
     end
-    it " - error balance - empty response" do
+    it " - error apps - empty response" do
       allow(@vonage.data_source).to receive(:apps).and_return("{}")
       apps = @vonage.apps
       expect(apps).to eq([])
     end
-    it " - error balance - invalid response" do
+    it " - error apps - invalid response" do
       allow(@vonage.data_source).to receive(:apps).and_return('{ "_embedded": "test"}')
       apps = @vonage.apps
       expect(apps).to eq([])
     end
-    it " - error balance - invalid response" do
+    it " - error apps - invalid response" do
       allow(@vonage.data_source).to receive(:apps).and_return('{ "_embedded": {"application": "test"}}')
       apps = @vonage.apps
       expect(apps).to eq([])
@@ -166,40 +166,5 @@ RSpec.describe Vonage do
 
   # end
 
-
-  it " - generates admin jwt" do
-    jwt = @vonage.admin_jwt
-    expect(jwt).to_not be_nil
-  end
-  
-
-  it " - retrieve users" do
-    users = Vonage.users(ENV['APP_ID'], ENV['APP_PRIVATE_KEY'])
-    expect(users).to_not be_nil
-    expect(users._embedded.users).to_not be_nil
-    expect(users._links).to_not be_nil
-  end
-
-  
-  # it " - create a user" do
-  #   name = Faker::Name.first_name + "-" + SecureRandom.uuid
-  #   display_name = Faker::Name.name
-  #   user = Vonage.create_user(ENV['APP_ID'], ENV['APP_PRIVATE_KEY'], name, display_name)
-  #   puts user.inspect
-  #   expect(user).to_not be_nil
-  #   expect(user.id).to_not be_nil
-  #   expect(user._links.self).to_not be_nil
-  # end
-
-  # it " - delete a user" do
-  #   users = Vonage.users(ENV['APP_ID'], ENV['APP_PRIVATE_KEY'])
-  #   before_count = users._embedded.users.count
-  #   expect(users._embedded.users.count).to be > 0
-  #   user_id = users._embedded.users.first.id
-  #   expect(user_id).to_not be_nil
-  #   expect(Vonage.delete_user(ENV['APP_ID'], ENV['APP_PRIVATE_KEY'], user_id)).to be_truthy
-  #   users = Vonage.users(ENV['APP_ID'], ENV['APP_PRIVATE_KEY'])
-  #   expect(users._embedded.users.count).to eq(before_count - 1)
-  # end
 
 end

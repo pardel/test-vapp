@@ -29,6 +29,31 @@ class VonageDataSource
     return response.is_a?(Net::HTTPSuccess) ? response.body : nil
   end
 
+  def admin_jwt
+    rsa_private = OpenSSL::PKey::RSA.new(ENV['APP_PRIVATE_KEY'])
+    payload = {
+      "application_id": ENV['APP_ID'],
+      "iat": Time.now.to_i,
+      "jti": SecureRandom.uuid,
+      "exp": (Time.now.to_i + 86400),
+    }
+    token = JWT.encode payload, rsa_private, 'RS256'
+    return token
+  end
+
+  def users(url)
+    uri = URI(url || 'https://api.nexmo.com/v0.3/users')
+    request = Net::HTTP::Get.new(uri)
+    auth = "Bearer " + admin_jwt
+    request['Authorization'] = auth
+    request['Content-type'] = 'application/json'
+
+    response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) {|http|
+      http.request(request)
+    }
+    return response.is_a?(Net::HTTPSuccess) ? response.body : nil
+  end
+
 end
 
 class Vonage
@@ -167,32 +192,17 @@ class Vonage
   end
 
 
-  def admin_jwt
-    rsa_private = OpenSSL::PKey::RSA.new(ENV['APP_PRIVATE_KEY'])
-    payload = {
-      "application_id": ENV['APP_ID'],
-      "iat": Time.now.to_i,
-      "jti": SecureRandom.uuid,
-      "exp": (Time.now.to_i + 86400),
-    }
-    token = JWT.encode payload, rsa_private, 'RS256'
-    return token
-  end
-
-
-  def self.users(app_id, private_key, url = 'https://api.nexmo.com/v0.3/users')
-    uri = URI(url)
-    request = Net::HTTP::Get.new(uri)
-    auth = "Bearer " + admin_jwt(app_id, private_key)
-    request['Authorization'] = auth
-    request['Content-type'] = 'application/json'
-
-    response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) {|http|
-      http.request(request)
-    }
-    return [] unless response.is_a?(Net::HTTPSuccess)
-    json_users = JSON.parse(response.body, object_class: OpenStruct)
-    return json_users
+  def users(url = nil)
+    response = @data_source.users(url)
+    puts response
+    return [] if response == nil
+    begin
+      json_object = JSON.parse(response, object_class: OpenStruct)
+    rescue JSON::ParserError
+      return []
+    end
+    return [] if json_object._embedded == nil || json_object._embedded.class.name != 'OpenStruct'
+    return json_object._embedded.users || []
   end
 
 
